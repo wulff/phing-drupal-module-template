@@ -1,0 +1,2 @@
+phing-drupal-module-template
+============================
