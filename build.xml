@@ -56,13 +56,13 @@
 
   <target name="lint" depends="lint-php,lint-js,lint-css" />
 
-  <target name="lint-php" depends="clean,prepare">
+  <target name="lint-php" depends="prepare">
     <phplint haltonfailure="true">
       <fileset refid="src.php" />
     </phplint>
   </target>
 
-  <target name="lint-js" depends="clean,prepare">
+  <target name="lint-js" depends="prepare">
     <foreach target="lint-js-file" param="filename" absparam="absfilename">
       <fileset refid="src.js" />
     </foreach>
@@ -80,7 +80,7 @@
     <append text="${report}" destFile="${project.basedir}/build/checkstyle-jslint-${filename.normalized}.xml" />
   </target>
 
-  <target name="lint-css" depends="clean,prepare">
+  <target name="lint-css" depends="prepare">
     <foreach target="lint-css-file" param="filename" absparam="absfilename">
       <fileset refid="src.css" />
     </foreach>
@@ -131,7 +131,7 @@
 
   <target name="check-debug" depends="check-debug-php,check-debug-js" />
 
-  <target name="check-debug-php" depends="clean,prepare">
+  <target name="check-debug-php" depends="prepare">
     <phingcall target="check-debug-fileset">
       <property name="debug.language" value="PHP" override="true" />
       <property name="debug.pattern" value="(var_dump\(|dsm\(|dpm\()" override="true" />
@@ -139,7 +139,7 @@
     </phingcall>
   </target>
 
-  <target name="check-debug-js" depends="clean,prepare">
+  <target name="check-debug-js" depends="prepare">
     <phingcall target="check-debug-fileset">
       <property name="debug.language" value="JavaScript" override="true" />
       <property name="debug.pattern" value="(console\.log\()" override="true" />
@@ -147,7 +147,7 @@
     </phingcall>
   </target>
 
-  <target name="check-debug-fileset" depends="clean,prepare">
+  <target name="check-debug-fileset" depends="prepare">
     <php function="strtolower" returnProperty="debug.language.lower">
       <param value="${debug.language}" />
     </php>
@@ -191,27 +191,27 @@
 
   <target name="analyze" depends="analyze-phploc,analyze-phpmd,analyze-phpcpd,analyze-phpcs" />
 
-  <target name="analyze-phploc" depends="clean,prepare">
+  <target name="analyze-phploc" depends="prepare">
     <phploc reportType="csv" reportName="phploc" reportDirectory="${project.basedir}/build" suffixes="php,module,inc,install,profile,test" countTests="true">
       <fileset refid="src.php" />
     </phploc>
   </target>
 
-  <target name="analyze-phpmd" depends="clean,prepare">
+  <target name="analyze-phpmd" depends="prepare">
     <phpmd rulesets="codesize,naming,design">
       <fileset refid="src.php" />
       <formatter type="xml" outfile="${project.basedir}/build/pmd.xml" />
     </phpmd>
   </target>
 
-  <target name="analyze-phpcpd" depends="clean,prepare">
+  <target name="analyze-phpcpd" depends="prepare">
     <phpcpd>
       <fileset refid="src.php" />
       <formatter type="pmd" outfile="${project.basedir}/build/pmd-cpd.xml" />
     </phpcpd>
   </target>
 
-  <target name="analyze-phpcs" depends="clean,prepare">
+  <target name="analyze-phpcs" depends="prepare">
     <exec command="phpcs --report=checkstyle --report-file=${project.basedir}/build/checkstyle-codesniffer.xml --standard=Drupal --extensions=php,module,install,inc,profile,test --ignore=*/contrib/*,*/development/*,*.features.*,*.field_group.*,*.layouts.*,*.pages_default.*,*.panelizer.*,*.panels_default.*,*.strongarm.*,*.views_default.* ${project.basedir}" logoutput="true" />
   </target>
 </project>
