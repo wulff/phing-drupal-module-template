@@ -75,8 +75,13 @@ This buildfile requries that some tools are available in specific locations unde
 
     # download drupal codesniffer rules
 
-    exec { 'install-drupalcs':
-      command => 'wget http://ftp.drupal.org/files/projects/drupalcs-7.x-1.0.tar.gz && tar xzf drupalcs-7.x-1.0.tar.gz && rm drupalcs-7.x-1.0.tar.gz',
-      cwd     => '/opt',
-      creates => '/opt/drupalcs/Drupal/ruleset.xml',
+    exec { 'install-drupal-coder':
+      command => 'git clone --branch 7.x-2.x http://git.drupal.org/project/coder.git /opt/coder',
+      creates => '/opt/coder/coder_sniffer/Drupal/ruleset.xml',
+    }
+
+    file { '/usr/share/php/PHP/CodeSniffer/Standards/Drupal':
+      ensure => link,
+      target => '/opt/coder/coder_sniffer/Drupal',
+      require => Exec['install-drupal-coder'],
     }
