@@ -73,7 +73,7 @@ This buildfile requries that some tools are available in specific locations unde
       require => File['/opt/phploctask'],
     }
 
-    # download drupal codesniffer rules
+### Download Drupal codesniffer rules
 
     exec { 'install-drupal-coder':
       command => 'git clone --branch 7.x-2.x http://git.drupal.org/project/coder.git /opt/coder',
