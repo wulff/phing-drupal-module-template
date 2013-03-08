@@ -70,7 +70,7 @@
 
   <target name="lint-js-file">
     <echo>Linting file: ${absfilename}</echo>
-    <exec command="java -jar /opt/jslint4java-2.0.2/jslint4java-2.0.2.jar --jslint /opt/jslint/fulljslint.js --report checkstyle ${absfilename}" outputProperty="report" />
+    <exec command="jshint --reporter=checkstyle ${absfilename}" outputProperty="report" />
     <php function="str_replace" returnProperty="filename.normalized">
       <param value="/" />
       <param value="-" />
