@@ -76,7 +76,12 @@
       <param value="-" />
       <param value="${filename}" />
     </php>
-    <delete file="${project.basedir}/build/checkstyle-jslint-${filename.normalized}.xml" />
+    <if>
+      <available file="${project.basedir}/build/checkstyle-jslint-${filename.normalized}.xml" />
+      <then>
+        <delete file="${project.basedir}/build/checkstyle-jslint-${filename.normalized}.xml" />
+      </then>
+    </if>
     <append text="${report}" destFile="${project.basedir}/build/checkstyle-jslint-${filename.normalized}.xml" />
   </target>
 
@@ -88,7 +93,7 @@
 
   <target name="lint-css-file">
     <echo>Linting file: ${absfilename}</echo>
-    <exec command="java -jar /opt/rhino1_7R3/js.jar /opt/csslint/csslint-rhino.js --format=checkstyle-xml --rules=display-property-grouping,duplicate-properties,empty-rules,known-properties,box-sizing,compatible-vendor-prefixes,gradients,vendor-prefix,import,zero-units,shorthand,important ${absfilename}" outputProperty="report" />
+    <exec command="csslint --format=checkstyle-xml --rules=display-property-grouping,duplicate-properties,empty-rules,known-properties,box-sizing,compatible-vendor-prefixes,gradients,vendor-prefix,import,zero-units,shorthand,important ${absfilename}" outputProperty="report" />
 
     <php function="str_replace" returnProperty="filename.normalized">
       <param value="/" />
@@ -98,7 +103,12 @@
 
     <property name="csslint.report.file" value="${project.basedir}/build/checkstyle-csslint-${filename.normalized}.xml" />
 
-    <delete file="${csslint.report.file}" />
+    <if>
+      <available file="${csslint.report.file}" />
+      <then>
+        <delete file="${csslint.report.file}" />
+      </then>
+    </if>
     <append text="${report}" destFile="${csslint.report.file}" />
 
     <property name="csslint.rules.break" value="parsing-errors" />
@@ -152,7 +162,13 @@
       <param value="${debug.language}" />
     </php>
     <property name="debug.output" value="${project.basedir}/build/debug_${debug.language.lower}.txt" override="true" />
-    <delete file="${debug.output}" />
+
+    <if>
+      <available file="${debug.output}" />
+      <then>
+        <delete file="${debug.output}" />
+      </then>
+    </if>
     <append text="" destFile="${debug.output}" />
 
     <foreach target="check-debug-file" param="filename" absparam="absfilename">
