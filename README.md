@@ -8,56 +8,32 @@ Based on the [Phing Drupal Template](https://github.com/reload/phing-drupal-temp
 Requirements
 ------------
 
-This buildfile requries that some tools are available in specific locations under the `/opt` directory. You can use the following snippets in a Puppet manifest to make sure they're available:
+This buildfile requries that JShint and CSSlint are available. You can use the following snippets in a Puppet manifest to make sure they're available:
 
-### Download and install jslint tools
+### Download and install JShint
 
-    exec { 'download-jslint4java':
-      command => 'wget -P /root https://jslint4java.googlecode.com/files/jslint4java-2.0.2-dist.zip',
-      creates => '/root/jslint4java-2.0.2-dist.zip',
+    exec { 'npm-install-jshint':
+      command => 'npm install -g jshint',
+      creates => '/usr/local/bin/jshint',
+      require => Package['npm'],
     }
 
-    exec { 'install-jslint4java':
-      command => 'unzip -q jslint4java-2.0.2-dist.zip && mv jslint4java-2.0.2 /opt && chmod 755 /opt/jslint4java-2.0.2',
-      cwd     => '/root',
-      creates => '/opt/jslint4java-2.0.2',
-      require => Exec['download-jslint4java'],
+    exec { 'npm-update-jshint':
+      command => 'npm update -g jshint',
+      require => Exec['npm-install-jshint'],
     }
 
-    file { '/opt/jslint':
-      ensure => directory,
+### Download and install CSSlint
+
+    exec { 'npm-install-csslint':
+      command => 'npm install -g csslint',
+      creates => '/usr/local/bin/csslint',
+      require => Package['npm'],
     }
 
-    exec { 'download-fulljslint':
-      command => 'wget https://raw.github.com/mikewest/JSLint/master/fulljslint.js',
-      cwd     => '/opt/jslint',
-      creates => '/opt/jslint/fulljslint.js',
-      require => File['/opt/jslint'],
-    }
-
-### Download and install rhino
-
-    exec { 'download-rhino':
-      command => 'wget -P /root http://ftp.mozilla.org/pub/mozilla.org/js/rhino1_7R3.zip',
-      creates => '/root/rhino1_7R3.zip',
-    }
-
-    exec { 'install-rhino':
-      command => 'unzip -q rhino1_7R3.zip && mv rhino1_7R3 /opt',
-      cwd     => '/root',
-      creates => '/opt/rhino1_7R3',
-      require => Exec['download-rhino'],
-    }
-
-    file { '/opt/csslint':
-      ensure => directory,
-    }
-
-    exec { 'download-csslint':
-      command => 'wget https://raw.github.com/stubbornella/csslint/master/release/csslint-rhino.js',
-      cwd     => '/opt/csslint',
-      creates => '/opt/csslint/csslint-rhino.js',
-      require => File['/opt/csslint'],
+    exec { 'npm-update-csslint':
+      command => 'npm update -g csslint',
+      require => Exec['npm-install-csslint'],
     }
 
 ### Download and install phing phploc integration
@@ -83,5 +59,5 @@ This buildfile requries that some tools are available in specific locations unde
     file { '/usr/share/php/PHP/CodeSniffer/Standards/Drupal':
       ensure => link,
       target => '/opt/coder/coder_sniffer/Drupal',
-      require => Exec['install-drupal-coder'],
+      require => [Exec['install-drupal-coder'], Class['php::qatools']],
     }
