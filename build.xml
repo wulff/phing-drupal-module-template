@@ -69,7 +69,7 @@
   </target>
 
   <target name="lint-js-file">
-    <echo>Linting file: ${absfilename}</echo>
+    <echo>Linting JS file: ${absfilename}</echo>
     <exec command="jshint --reporter=checkstyle ${absfilename}" outputProperty="report" />
     <php function="str_replace" returnProperty="filename.normalized">
       <param value="/" />
@@ -92,51 +92,20 @@
   </target>
 
   <target name="lint-css-file">
-    <echo>Linting file: ${absfilename}</echo>
+    <echo>Linting CSS file: ${absfilename}</echo>
     <exec command="csslint --format=checkstyle-xml --rules=display-property-grouping,duplicate-properties,empty-rules,known-properties,box-sizing,compatible-vendor-prefixes,gradients,vendor-prefix,import,zero-units,shorthand,important ${absfilename}" outputProperty="report" />
-
     <php function="str_replace" returnProperty="filename.normalized">
       <param value="/" />
       <param value="-" />
       <param value="${filename}" />
     </php>
-
-    <property name="csslint.report.file" value="${project.basedir}/build/checkstyle-csslint-${filename.normalized}.xml" />
-
     <if>
-      <available file="${csslint.report.file}" />
+      <available file="${project.basedir}/build/checkstyle-csslint-${filename.normalized}.xml" />
       <then>
-        <delete file="${csslint.report.file}" />
+        <delete file="${project.basedir}/build/checkstyle-csslint-${filename.normalized}.xml" />
       </then>
     </if>
-    <append text="${report}" destFile="${csslint.report.file}" />
-
-    <property name="csslint.rules.break" value="parsing-errors" />
-    <php expression="str_replace('-', '', '${csslint.rules.break}')" returnProperty="csslint.rules.break" />
-    <php expression="preg_replace('/(\s+|\s*,\s*)/', '|', '${csslint.rules.break}')" returnProperty="csslint.rules.break" />
-
-    <if>
-      <not>
-        <equals arg1="${csslint.rules.break}" arg2="" />
-      </not>
-      <then>
-        <loadfile property="csslint.break.errors" file="${csslint.report.file}">
-          <filterchain>
-            <linecontainsregexp>
-              <regexp pattern="(net\.csslint\.(${csslint.rules.break}))" ignoreCase="true" />
-            </linecontainsregexp>
-          </filterchain>
-        </loadfile>
-        <if>
-          <not>
-            <equals arg1="${csslint.break.errors}" arg2="" />
-          </not>
-          <then>
-            <fail message="CSS error detected in file ${absfilename}" />
-          </then>
-        </if>
-      </then>
-    </if>
+    <append text="${report}" destFile="${project.basedir}/build/checkstyle-csslint-${filename.normalized}.xml" />
   </target>
 
   <target name="check-debug" depends="check-debug-php,check-debug-js" />
